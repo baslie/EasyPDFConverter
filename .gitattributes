@@ -1,0 +1,6 @@
+# Windows-скрипты всегда с CRLF, чтобы ZIP с GitHub работал без правок
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.md  text
+LICENSE text
+.gitignore text
