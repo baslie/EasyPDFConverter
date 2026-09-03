@@ -374,9 +374,10 @@ function Convert-PdfFile {
     $outDir = Join-Path $OutputRoot $base
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
-    # Удаляем результаты прошлого запуска с тем же именем, чтобы не смешивать страницы.
+    # Удаляем результаты прошлых запусков в любом формате, чтобы в папке были только
+    # страницы текущей конвертации и не смешивались PNG с JPEG.
     Get-ChildItem -LiteralPath $outDir -File -ErrorAction SilentlyContinue |
-        Where-Object { $_.Name -like "$base-*.$ext" } |
+        Where-Object { $_.Name -like "$base-*.png" -or $_.Name -like "$base-*.jpg" } |
         Remove-Item -Force -ErrorAction SilentlyContinue
 
     $tmpDir = if ($Stage) { $Stage } else { $env:TEMP }
