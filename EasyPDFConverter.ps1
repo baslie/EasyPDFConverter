@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    EasyPDFConverter - конвертирует PDF-файлы в PNG или JPEG в максимальном качестве.
+    EasyPDFConverter - конвертирует PDF-файлы в JPEG или PNG в максимальном качестве.
 
 .DESCRIPTION
     Скрипт берёт все PDF-файлы из папки, в которой лежит, спрашивает формат и разрешение,
@@ -10,14 +10,15 @@
     Poppler для Windows автоматически скачивается в папку tools\poppler - ничего
     устанавливать не нужно.
 
-    PNG сохраняется без потерь. JPEG - с качеством 100 и оптимизацией таблиц Хаффмана.
+    JPEG сохраняется с качеством 100 и оптимизацией таблиц Хаффмана (формат по умолчанию).
+    PNG - без потерь.
 
 .PARAMETER Path
     Один или несколько PDF-файлов либо папок с ними. Если не указано - берутся все PDF
     из папки скрипта. Сюда же попадают файлы, перетащенные мышкой на .bat-лаунчер.
 
 .PARAMETER Format
-    png или jpeg. Если не указан - скрипт спросит.
+    jpeg или png. Если не указан - скрипт спросит; Enter без ввода выбирает jpeg.
 
 .PARAMETER Dpi
     Разрешение рендеринга в точках на дюйм (36-2400). Если не указано - скрипт спросит.
@@ -48,7 +49,7 @@ param(
     [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
     [string[]]$Path,
 
-    [ValidateSet('png', 'jpeg', 'jpg')]
+    [ValidateSet('jpeg', 'jpg', 'png')]
     [string]$Format,
 
     [ValidateRange(36, 2400)]
@@ -81,7 +82,7 @@ $PopplerFallbackUrl = "https://github.com/$PopplerRepo/releases/download/$Popple
 function Write-Title {
     Write-Host ''
     Write-Host '  ==========================================' -ForegroundColor DarkCyan
-    Write-Host '    EasyPDFConverter  -  PDF -> PNG / JPEG  ' -ForegroundColor Cyan
+    Write-Host '    EasyPDFConverter  -  PDF -> JPEG / PNG  ' -ForegroundColor Cyan
     Write-Host '  ==========================================' -ForegroundColor DarkCyan
     Write-Host ''
 }
@@ -279,14 +280,14 @@ function Get-InputPdfs {
 # ---------------------------------------------------------------------------
 function Read-Format {
     Write-Host '  Выберите формат:' -ForegroundColor White
-    Write-Host '    [1] PNG  - без потерь, максимальное качество (рекомендуется)'
-    Write-Host '    [2] JPEG - качество 100, файлы заметно меньше'
+    Write-Host '    [1] JPEG - качество 100, файлы заметно меньше (рекомендуется)'
+    Write-Host '    [2] PNG  - без потерь, максимальное качество'
     while ($true) {
         $answer = (Read-Host '  Ваш выбор (Enter = 1)').Trim()
         switch -Regex ($answer) {
-            '^(|1|png)$'  { return 'png' }
-            '^(2|jpe?g)$' { return 'jpeg' }
-            default       { Write-Warn 'Введите 1 или 2.' }
+            '^(|1|jpe?g)$' { return 'jpeg' }
+            '^(2|png)$'    { return 'png' }
+            default        { Write-Warn 'Введите 1 или 2.' }
         }
     }
 }
